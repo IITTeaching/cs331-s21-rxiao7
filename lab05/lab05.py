@@ -4,8 +4,6 @@ from unittest import TestCase
 
 ################################################################################
 # Linked list class you should implement
-################################################################################
-# Linked list class you should implement
 class LinkedList:
     class Node:
         def __init__(self, val, prior=None, next=None):
@@ -207,6 +205,8 @@ class LinkedList:
         """Returns True if this LinkedList contains the same elements (in order) as
         other. If other is not an LinkedList, returns False."""
         ### BEGIN SOLUTION
+        if type(other) is not LinkedList:
+            return False
         if len(self) == len(other):
             for i in range(len(self)):
                 if self[i] != other[i]:
@@ -221,6 +221,7 @@ class LinkedList:
         for el in self:
             if el == value:
                 return True
+        return False
         ### END SOLUTION
 
     ### queries ###
@@ -260,6 +261,7 @@ class LinkedList:
         for idx in range(i, j):
             if self[idx] == value:
                 return idx
+        raise ValueError
         ### END SOLUTION
 
     def count(self, value):
