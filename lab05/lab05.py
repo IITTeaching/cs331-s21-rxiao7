@@ -271,6 +271,7 @@ class LinkedList:
         for el in self:
             if el == value:
                 ct += 1
+        return ct
         ### END SOLUTION
 
     ### bulk operations ###
