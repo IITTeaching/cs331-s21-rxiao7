@@ -235,7 +235,7 @@ class LinkedList:
         ### BEGIN SOLUTION
         minVal = self[0]
         for i in range(1, len(self)):
-            if self[i].val < minVal:
+            if self[i] < minVal:
                 minVal = self[i]
         return minVal
         ### END SOLUTION
@@ -257,7 +257,9 @@ class LinkedList:
         is not in the list, raise a ValueError."""
         ### BEGIN SOLUTION
         if j is None:
-            end = len(self)
+            j = len(self)
+        i = self._normalize_idx(i)
+        j = self._normalize_idx(j)
         for idx in range(i, j):
             if self[idx] == value:
                 return idx
@@ -271,6 +273,7 @@ class LinkedList:
         for el in self:
             if el == value:
                 ct += 1
+        return ct
         ### END SOLUTION
 
     ### bulk operations ###
