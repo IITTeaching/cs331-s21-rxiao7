@@ -257,7 +257,9 @@ class LinkedList:
         is not in the list, raise a ValueError."""
         ### BEGIN SOLUTION
         if j is None:
-            end = len(self)
+            j = len(self)
+        i = self._normalize_idx(i)
+        j = self._normalize_idx(j)
         for idx in range(i, j):
             if self[idx] == value:
                 return idx
