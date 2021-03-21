@@ -235,7 +235,7 @@ class LinkedList:
         ### BEGIN SOLUTION
         minVal = self[0]
         for i in range(1, len(self)):
-            if self[i].val < minVal:
+            if self[i] < minVal:
                 minVal = self[i]
         return minVal
         ### END SOLUTION
