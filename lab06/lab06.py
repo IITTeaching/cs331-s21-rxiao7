@@ -51,6 +51,19 @@ def check_delimiters(expr):
     delim_closers = '})]>'
 
     ### BEGIN SOLUTION
+    stack_expr = Stack()
+    for c in expr:
+        if c in delim_openers:
+            stack_expr.push(c)
+        elif c in delim_closers:
+            idx = delim_closers.index(c)
+            if stack_expr.peek() == delim_openers[idx]:
+                stack_expr.pop()
+            else:
+                return False
+    if stack_expr.empty():
+        return True
+    return False
     ### END SOLUTION
 
 ################################################################################
@@ -121,6 +134,23 @@ def infix_to_postfix(expr):
     postfix = []
     toks = expr.split()
     ### BEGIN SOLUTION
+    for tok in toks:
+        if tok.isdigit():
+            postfix.append(tok)
+        elif tok == "(" or ops.empty() or ops.peek() == "(":
+            ops.push(tok)
+        elif tok == ")":
+            while ops.peek() != "(":
+                postfix.append(ops.pop())
+            ops.pop()
+        else:
+            if prec[tok] > prec[ops.peek()]:
+                ops.push(tok)
+            else:
+                postfix.append(ops.pop())
+                ops.push(tok)
+    while not ops.empty():
+        postfix.append(ops.pop())
     ### END SOLUTION
     return ' '.join(postfix)
 
@@ -161,24 +191,53 @@ class Queue:
         self.head = -1
         self.tail = -1
 
-    ### BEGIN SOLUTION
-    ### END SOLUTION
+        ### BEGIN SOLUTION
+        self.limit = limit
+        self.len = 0
+        ### END SOLUTION
 
     def enqueue(self, val):
         ### BEGIN SOLUTION
+        if self.len >= self.limit:
+            raise RuntimeError
+        self.tail += 1
+        if self.head < 0:
+            self.head += 1
+        self.data[self.tail % self.limit] = val
+        self.len += 1
         ### END SOLUTION
 
     def dequeue(self):
         ### BEGIN SOLUTION
+        if self.empty():
+            raise RuntimeError
+        val = self.data[self.head % self.limit]
+        self.data[self.head % self.limit] = None
+        self.head += 1
+        self.len -= 1
+        if self.empty():
+            self.head = -1
+            self.tail = -1
+        return val
         ### END SOLUTION
 
     def resize(self, newsize):
         assert(len(self.data) < newsize)
         ### BEGIN SOLUTION
+        new_queue = [None] * newsize
+        i = 0
+        for el in self:
+            new_queue[i] = el
+            i += 1
+        self.data = new_queue
+        self.limit = newsize
+        self.tail = self.tail - self.head
+        self.head = 0
         ### END SOLUTION
 
     def empty(self):
         ### BEGIN SOLUTION
+        return self.len == 0
         ### END SOLUTION
 
     def __bool__(self):
@@ -194,6 +253,8 @@ class Queue:
 
     def __iter__(self):
         ### BEGIN SOLUTION
+        for i in range(self.head, self.tail+1):
+            yield self.data[i % self.limit]
         ### END SOLUTION
 
 ################################################################################
