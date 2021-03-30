@@ -192,18 +192,17 @@ class Queue:
         self.tail = -1
 
         ### BEGIN SOLUTION
-        self.limit = limit
         self.len = 0
         ### END SOLUTION
 
     def enqueue(self, val):
         ### BEGIN SOLUTION
-        if self.len >= self.limit:
+        if self.len >= len(self.data):
             raise RuntimeError
-        self.tail += 1
+        self.tail = (self.tail + 1) % len(self.data)
         if self.head < 0:
-            self.head += 1
-        self.data[self.tail % self.limit] = val
+            self.head = 0
+        self.data[self.tail] = val
         self.len += 1
         ### END SOLUTION
 
@@ -211,13 +210,13 @@ class Queue:
         ### BEGIN SOLUTION
         if self.empty():
             raise RuntimeError
-        val = self.data[self.head % self.limit]
-        self.data[self.head % self.limit] = None
-        self.head += 1
         self.len -= 1
+        val = self.data[self.head]
+        self.data[self.head] = None
+        self.head = (self.head + 1) % len(self.data)
         if self.empty():
-            self.head = -1
             self.tail = -1
+            self.head = -1
         return val
         ### END SOLUTION
 
@@ -230,8 +229,7 @@ class Queue:
             new_queue[i] = el
             i += 1
         self.data = new_queue
-        self.limit = newsize
-        self.tail = self.tail - self.head
+        self.tail = i - 1
         self.head = 0
         ### END SOLUTION
 
@@ -253,8 +251,8 @@ class Queue:
 
     def __iter__(self):
         ### BEGIN SOLUTION
-        for i in range(self.head, self.tail+1):
-            yield self.data[i % self.limit]
+        for i in range(self.head, len(self.data) + self.tail+1):
+            yield self.data[i % len(self.data)]
         ### END SOLUTION
 
 ################################################################################
