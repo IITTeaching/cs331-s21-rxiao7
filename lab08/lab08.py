@@ -24,10 +24,29 @@ class Heap:
 
     def heapify(self, idx=0):
         ### BEGIN SOLUTION
+        while self._left(idx) < len(self):
+            left_idx = self._left(idx)
+            right_idx = self._right(idx)
+            if right_idx == len(self):
+                max_idx = left_idx
+            else:
+                max_idx = left_idx if self.key(self.data[left_idx]) >= self.key(self.data[right_idx]) else right_idx
+            if self.key(self.data[idx]) < self.key(self.data[max_idx]):
+                self.data[idx], self.data[max_idx] = self.data[max_idx], self.data[idx]
+                idx = max_idx
+            else:
+                break
         ### END SOLUTION
 
     def add(self, x):
         ### BEGIN SOLUTION
+        self.data.append(x)
+        curr = len(self)-1
+        parent = self._parent(curr)
+        while curr > 0 and self.key(self.data[parent]) < self.key(x):
+            self.data[parent], self.data[curr] = self.data[curr], self.data[parent]
+            curr = parent
+            parent = self._parent(curr)
         ### END SOLUTION
 
     def peek(self):
@@ -130,6 +149,21 @@ def test_key_heap_5():
 ################################################################################
 def running_medians(iterable):
     ### BEGIN SOLUTION
+    min_heap = Heap(lambda x: x * -1)
+    max_heap = Heap()
+    medians = [0] * len(iterable)
+    for i, item in enumerate(iterable):
+        min_heap.add(item)
+        max_heap.add(min_heap.pop())
+
+        if len(min_heap) < len(max_heap):
+            min_heap.add(max_heap.pop())
+
+        if len(min_heap) == len(max_heap):
+            medians[i] = (min_heap.peek() + max_heap.peek()) / 2
+        else:
+            medians[i] = min_heap.peek()
+    return medians
     ### END SOLUTION
 
 ################################################################################
@@ -174,6 +208,14 @@ def test_median_3():
 ################################################################################
 def topk(items, k, keyf):
     ### BEGIN SOLUTION
+    min_heap = Heap(lambda x: keyf(x) * -1)
+    for item in items:
+        if len(min_heap) < k:
+            min_heap.add(item)
+        elif keyf(item) > keyf(min_heap.peek()):
+            min_heap.pop()
+            min_heap.add(item)
+    return sorted(list(min_heap), key=keyf, reverse=True)
     ### END SOLUTION
 
 ################################################################################
