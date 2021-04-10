@@ -51,6 +51,17 @@ class HBStree:
         KeyError, if key does not exist.
         """
         # BEGIN SOLUTION
+        def dfs(node, key):
+            if node is None:
+                raise KeyError
+            elif node.val == key:
+                return key
+            elif key < node.val:
+                return dfs(node.left, key)
+            else:
+                return dfs(node.right, key)
+            
+        return dfs(self.root_versions[-1], key)
         # END SOLUTION
 
     def __contains__(self, el):
@@ -58,6 +69,11 @@ class HBStree:
         Return True if el exists in the current version of the tree.
         """
         # BEGIN SOLUTION
+        try:
+            _ = self[el]
+            return True
+        except KeyError:
+            return False
         # END SOLUTION
 
     def insert(self,key):
@@ -66,12 +82,50 @@ class HBStree:
         tree. If key already exists, then do nothing and refrain
         from creating a new version.
         """
-        # BEGIN SOLUTION
+        # BEGIN SOLUTION        
+        def dfs(node, key):
+            if node is None:
+                return HBStree.INode(key, None, None)
+            elif node.val == key:
+                raise KeyError
+            elif key < node.val:
+                return HBStree.INode(node.val, dfs(node.left, key), node.right)
+            else:
+                return HBStree.INode(node.val, node.left, dfs(node.right, key))
+        
+        try:
+            self.root_versions.append(dfs(self.root_versions[-1], key))
+        except KeyError:
+            pass
         # END SOLUTION
 
     def delete(self,key):
         """Delete key from the tree, creating a new version of the tree. If key does not exist in the current version of the tree, then do nothing and refrain from creating a new version."""
         # BEGIN SOLUTION
+        def dfs(node, key):
+            if node is None:
+                raise KeyError
+            elif node.val == key:
+                if node.left and not node.right:
+                    return node.left
+                elif node.right and not node.left:
+                    return node.right
+                elif not node.left and not node.right:
+                    return None
+                else:
+                    curr = node.left
+                    while curr.right:
+                        curr = curr.right
+                    return HBStree.INode(curr.val, curr.left, node.right)
+            elif key < node.val:
+                return HBStree.INode(node.val, dfs(node.left, key), node.right)
+            else:
+                return HBStree.INode(node.val, node.left, dfs(node.right, key))
+        
+        try:
+            self.root_versions.append(dfs(self.root_versions[-1], key))
+        except KeyError:
+            pass
         # END SOLUTION
 
     @staticmethod
@@ -143,6 +197,29 @@ class HBStree:
         if timetravel < 0 or timetravel >= len(self.root_versions):
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
         # BEGIN SOLUTION
+        def dfs(node, lst):
+            if node is None:
+                return None
+            elif lst and node.left is None and node.right is None:
+                return node.val
+
+            left = dfs(node.left, lst)
+
+            if left is not None:
+                lst.append(left)
+
+            lst.append(node.val)
+
+            right = dfs(node.right, lst)
+
+            if right is not None:
+                lst.append(right)
+
+        node = self.root_versions[self.num_versions() - 1 - timetravel]
+        lst = []
+        dfs(node, lst)
+        for val in lst:
+            yield val
         # END SOLUTION
 
     @staticmethod
