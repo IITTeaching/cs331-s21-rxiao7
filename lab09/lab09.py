@@ -116,7 +116,7 @@ class HBStree:
                     curr = node.left
                     while curr.right:
                         curr = curr.right
-                    return HBStree.INode(curr.val, curr.left, node.right)
+                    return HBStree.INode(curr.val, dfs(node.left, curr.val), node.right)
             elif key < node.val:
                 return HBStree.INode(node.val, dfs(node.left, key), node.right)
             else:
