@@ -198,28 +198,15 @@ class HBStree:
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
         # BEGIN SOLUTION
         def dfs(node, lst):
-            if node is None:
-                return None
-            elif lst and node.left is None and node.right is None:
-                return node.val
-
-            left = dfs(node.left, lst)
-
-            if left is not None:
-                lst.append(left)
-
-            lst.append(node.val)
-
-            right = dfs(node.right, lst)
-
-            if right is not None:
-                lst.append(right)
+            if node:
+                dfs(node.left, lst)
+                lst.append(node.val)
+                dfs(node.right, lst)
 
         node = self.root_versions[self.num_versions() - 1 - timetravel]
         lst = []
         dfs(node, lst)
-        for val in lst:
-            yield val
+        return lst
         # END SOLUTION
 
     @staticmethod
@@ -285,7 +272,7 @@ def check_inserted(vals):
 
     for v in vals:
         t.insert(v)
-
+    
     for i in range(0,len(vals) + 1):
         sortel = [ v for v in t.version_iter(len(vals) - i) ]
         sortval = sorted(vals[0:i])
@@ -331,6 +318,7 @@ def insert_check_delete(vals):
         t.insert(v)
 
     todo = sorted(vals)
+    
     for i in range(0,len(vals)):
         t.delete(todo[0])
         del todo[0]
