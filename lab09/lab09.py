@@ -197,16 +197,18 @@ class HBStree:
         if timetravel < 0 or timetravel >= len(self.root_versions):
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
         # BEGIN SOLUTION
-        def dfs(node, lst):
+        def dfs(node):
             if node:
-                dfs(node.left, lst)
-                lst.append(node.val)
-                dfs(node.right, lst)
+                for val in dfs(node.left):
+                    yield val
+
+                yield node.val
+
+                for val in dfs(node.right):
+                    yield val
 
         node = self.root_versions[self.num_versions() - 1 - timetravel]
-        lst = []
-        dfs(node, lst)
-        return lst
+        return dfs(node)
         # END SOLUTION
 
     @staticmethod
