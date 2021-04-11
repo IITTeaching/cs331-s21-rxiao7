@@ -199,13 +199,9 @@ class HBStree:
         # BEGIN SOLUTION
         def dfs(node):
             if node:
-                for val in dfs(node.left):
-                    yield val
-
+                yield from dfs(node.left)
                 yield node.val
-
-                for val in dfs(node.right):
-                    yield val
+                yield from dfs(node.right)
 
         node = self.root_versions[self.num_versions() - 1 - timetravel]
         return dfs(node)
