@@ -206,7 +206,7 @@ class HBStree:
                 yield from dfs(node.right)
 
         node = self.root_versions[self.num_versions() - 1 - timetravel]
-        return dfs(node)
+        yield from dfs(node)
         # END SOLUTION
 
     @staticmethod

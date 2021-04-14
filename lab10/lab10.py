@@ -15,6 +15,9 @@ class AVLTree:
 
         def rotate_left(self):
             ### BEGIN SOLUTION
+            n = self.right
+            self.val, n.val = n.val, self.val
+            self.right, n.right, self.left, n.left = n.right, n.left, n, self.left
             ### END SOLUTION
 
         @staticmethod
@@ -31,16 +34,82 @@ class AVLTree:
     @staticmethod
     def rebalance(t):
         ### BEGIN SOLUTION
+        if abs(AVLTree.Node.height(t.left)) > abs(AVLTree.Node.height(t.right)) + 1:
+            if abs(AVLTree.Node.height(t.left.left)) >= abs(AVLTree.Node.height(t.left.right)):
+                # L-L geometry
+                t.rotate_right()
+            else:
+                # L-R geometry
+                t.left.rotate_left()
+                t.rotate_right()
+        elif abs(AVLTree.Node.height(t.right)) > abs(AVLTree.Node.height(t.left)) + 1:
+            if abs(AVLTree.Node.height(t.right.right)) >= abs(AVLTree.Node.height(t.right.left)):
+                # R-R geometry
+                t.rotate_left()
+            else:
+                # R-L geometry
+                t.right.rotate_right()
+                t.rotate_left()
         ### END SOLUTION
 
     def add(self, val):
         assert(val not in self)
         ### BEGIN SOLUTION
+        def traverse(node):
+            if node == None:
+                return AVLTree.Node(val)
+            elif val < node.val:
+                node.left = traverse(node.left)
+            else:
+                node.right = traverse(node.right)
+            
+            self.rebalance(node)
+            return node
+        
+        self.root = traverse(self.root)
         ### END SOLUTION
 
     def __delitem__(self, val):
         assert(val in self)
         ### BEGIN SOLUTION
+        def traverse(node):
+            if val == node.val:
+                if not node.left and node.right:
+                    return node.right
+                elif not node.right and node.left:
+                    return node.left
+                elif not node.left and not node.right:
+                    return None
+                else:
+                    parent = node
+                    child = node.left
+                    stack = [parent]
+
+                    while child.right:
+                        parent = child
+                        stack.append(parent)
+                        child = child.right
+                    
+                    node.val = child.val
+                    
+                    if parent is node:
+                        node.left = child.left
+                    else:
+                        parent.right = child.left
+
+                    while stack:
+                        self.rebalance(stack.pop())
+
+                    return node
+            elif val < node.val:
+                node.left = traverse(node.left)
+            else:
+                node.right = traverse(node.right)
+
+            self.rebalance(node)
+            return node
+        
+        self.root = traverse(self.root)
         ### END SOLUTION
 
     def __contains__(self, val):
