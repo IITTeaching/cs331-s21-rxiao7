@@ -34,22 +34,18 @@ class AVLTree:
     @staticmethod
     def rebalance(t):
         ### BEGIN SOLUTION
-        if abs(AVLTree.Node.height(t.left)) > abs(AVLTree.Node.height(t.right)) + 1:
-            if abs(AVLTree.Node.height(t.left.left)) >= abs(AVLTree.Node.height(t.left.right)):
-                # L-L geometry
-                t.rotate_right()
-            else:
-                # L-R geometry
-                t.left.rotate_left()
-                t.rotate_right()
-        elif abs(AVLTree.Node.height(t.right)) > abs(AVLTree.Node.height(t.left)) + 1:
-            if abs(AVLTree.Node.height(t.right.right)) >= abs(AVLTree.Node.height(t.right.left)):
-                # R-R geometry
-                t.rotate_left()
-            else:
-                # R-L geometry
+        heightR = AVLTree.Node.height(t.right)
+        heightL = AVLTree.Node.height(t.left)
+        if heightR - heightL > 1:
+            if AVLTree.Node.height(t.right.left) > AVLTree.Node.height(t.right.right):
+                # L-R
                 t.right.rotate_right()
-                t.rotate_left()
+            t.rotate_left()
+        elif heightL - heightR > 1:
+            if AVLTree.Node.height(t.left.right) > AVLTree.Node.height(t.left.left):
+                # R-L
+                t.left.rotate_left()
+            t.rotate_right()
         ### END SOLUTION
 
     def add(self, val):
