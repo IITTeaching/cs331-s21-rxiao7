@@ -2,11 +2,7 @@ from unittest import TestCase
 import random
 
 def quicksort(lst,pivot_fn):
-<<<<<<< HEAD
-    qsort(lst,0,len(lst)-1,pivot_fn)
-=======
     qsort(lst,0,len(lst) - 1,pivot_fn)
->>>>>>> 372257210a117071d97f842eda767d6014e4fc72
 
 def qsort(lst,low,high,pivot_fn):
     ### BEGIN SOLUTION
